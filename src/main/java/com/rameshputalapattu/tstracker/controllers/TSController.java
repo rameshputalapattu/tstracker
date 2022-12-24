@@ -3,10 +3,7 @@ package com.rameshputalapattu.tstracker.controllers;
 import com.rameshputalapattu.tstracker.dao.TimeSheetDAO;
 import com.rameshputalapattu.tstracker.model.TimeSheet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,5 +24,10 @@ public class TSController {
     public void createTimeSheet(@RequestBody TimeSheet timeSheet) {
 
         timeSheetDAO.create(timeSheet);
+    }
+
+    @GetMapping("/ts/{id}")
+    public TimeSheet getTimeSheetById(@PathVariable int id) {
+        return timeSheetDAO.get(id).orElse(null);
     }
 }
