@@ -21,7 +21,7 @@ public class TimeSheetDAO implements DAO<TimeSheet> {
 
     private static final Logger log = LoggerFactory.getLogger(TimeSheetDAO.class);
 
-    private RowMapper<TimeSheet> rowMapper = (rs,rowNum) -> {
+    private final RowMapper<TimeSheet> rowMapper = (rs,rowNum) -> {
         TimeSheet timeSheet = new TimeSheet();
         timeSheet.setDate(rs.getDate("date"));
         timeSheet.setTask(rs.getString("task"));
