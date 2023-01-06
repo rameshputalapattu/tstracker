@@ -14,8 +14,7 @@ import org.jooq.impl.Internal;
 
 
 /**
- * A class modelling foreign key relationships and constraints of tables in the
- * default schema.
+ * A class modelling foreign key relationships and constraints of tables in ts.
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Keys {
@@ -24,5 +23,5 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<TimesheetRecord> TIMESHEET__PK_TIMESHEET = Internal.createUniqueKey(Timesheet.TIMESHEET, DSL.name("pk_timesheet"), new TableField[] { Timesheet.TIMESHEET.ID }, true);
+    public static final UniqueKey<TimesheetRecord> TIMESHEET_PKEY = Internal.createUniqueKey(Timesheet.TIMESHEET, DSL.name("timesheet_pkey"), new TableField[] { Timesheet.TIMESHEET.ID }, true);
 }

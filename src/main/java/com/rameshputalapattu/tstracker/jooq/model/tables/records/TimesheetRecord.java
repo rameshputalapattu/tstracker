@@ -24,56 +24,56 @@ public class TimesheetRecord extends UpdatableRecordImpl<TimesheetRecord> implem
     private static final long serialVersionUID = 1L;
 
     /**
-     * Setter for <code>timesheet.ID</code>.
+     * Setter for <code>ts.timesheet.id</code>.
      */
     public void setId(Integer value) {
         set(0, value);
     }
 
     /**
-     * Getter for <code>timesheet.ID</code>.
+     * Getter for <code>ts.timesheet.id</code>.
      */
     public Integer getId() {
         return (Integer) get(0);
     }
 
     /**
-     * Setter for <code>timesheet.date</code>.
+     * Setter for <code>ts.timesheet.date</code>.
      */
     public void setDate(LocalDate value) {
         set(1, value);
     }
 
     /**
-     * Getter for <code>timesheet.date</code>.
+     * Getter for <code>ts.timesheet.date</code>.
      */
     public LocalDate getDate() {
         return (LocalDate) get(1);
     }
 
     /**
-     * Setter for <code>timesheet.task</code>.
+     * Setter for <code>ts.timesheet.task</code>.
      */
     public void setTask(String value) {
         set(2, value);
     }
 
     /**
-     * Getter for <code>timesheet.task</code>.
+     * Getter for <code>ts.timesheet.task</code>.
      */
     public String getTask() {
         return (String) get(2);
     }
 
     /**
-     * Setter for <code>timesheet.hours</code>.
+     * Setter for <code>ts.timesheet.hours</code>.
      */
     public void setHours(Integer value) {
         set(3, value);
     }
 
     /**
-     * Getter for <code>timesheet.hours</code>.
+     * Getter for <code>ts.timesheet.hours</code>.
      */
     public Integer getHours() {
         return (Integer) get(3);

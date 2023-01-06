@@ -4,23 +4,17 @@
 package com.rameshputalapattu.tstracker.jooq.model;
 
 
-import com.rameshputalapattu.tstracker.jooq.model.tables.SqliteSequence;
 import com.rameshputalapattu.tstracker.jooq.model.tables.Timesheet;
 
 
 /**
- * Convenience access to all tables in the default schema.
+ * Convenience access to all tables in ts.
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tables {
 
     /**
-     * The table <code>sqlite_sequence</code>.
-     */
-    public static final SqliteSequence SQLITE_SEQUENCE = SqliteSequence.SQLITE_SEQUENCE;
-
-    /**
-     * The table <code>timesheet</code>.
+     * The table <code>ts.timesheet</code>.
      */
     public static final Timesheet TIMESHEET = Timesheet.TIMESHEET;
 }

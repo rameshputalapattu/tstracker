@@ -4,8 +4,8 @@
 package com.rameshputalapattu.tstracker.jooq.model.tables;
 
 
-import com.rameshputalapattu.tstracker.jooq.model.DefaultSchema;
 import com.rameshputalapattu.tstracker.jooq.model.Keys;
+import com.rameshputalapattu.tstracker.jooq.model.Ts;
 import com.rameshputalapattu.tstracker.jooq.model.tables.records.TimesheetRecord;
 
 import java.time.LocalDate;
@@ -39,7 +39,7 @@ public class Timesheet extends TableImpl<TimesheetRecord> {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The reference instance of <code>timesheet</code>
+     * The reference instance of <code>ts.timesheet</code>
      */
     public static final Timesheet TIMESHEET = new Timesheet();
 
@@ -52,22 +52,22 @@ public class Timesheet extends TableImpl<TimesheetRecord> {
     }
 
     /**
-     * The column <code>timesheet.ID</code>.
+     * The column <code>ts.timesheet.id</code>.
      */
-    public final TableField<TimesheetRecord, Integer> ID = createField(DSL.name("ID"), SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+    public final TableField<TimesheetRecord, Integer> ID = createField(DSL.name("id"), SQLDataType.INTEGER.nullable(false).identity(true), this, "");
 
     /**
-     * The column <code>timesheet.date</code>.
+     * The column <code>ts.timesheet.date</code>.
      */
     public final TableField<TimesheetRecord, LocalDate> DATE = createField(DSL.name("date"), SQLDataType.LOCALDATE, this, "");
 
     /**
-     * The column <code>timesheet.task</code>.
+     * The column <code>ts.timesheet.task</code>.
      */
     public final TableField<TimesheetRecord, String> TASK = createField(DSL.name("task"), SQLDataType.CLOB, this, "");
 
     /**
-     * The column <code>timesheet.hours</code>.
+     * The column <code>ts.timesheet.hours</code>.
      */
     public final TableField<TimesheetRecord, Integer> HOURS = createField(DSL.name("hours"), SQLDataType.INTEGER, this, "");
 
@@ -80,21 +80,21 @@ public class Timesheet extends TableImpl<TimesheetRecord> {
     }
 
     /**
-     * Create an aliased <code>timesheet</code> table reference
+     * Create an aliased <code>ts.timesheet</code> table reference
      */
     public Timesheet(String alias) {
         this(DSL.name(alias), TIMESHEET);
     }
 
     /**
-     * Create an aliased <code>timesheet</code> table reference
+     * Create an aliased <code>ts.timesheet</code> table reference
      */
     public Timesheet(Name alias) {
         this(alias, TIMESHEET);
     }
 
     /**
-     * Create a <code>timesheet</code> table reference
+     * Create a <code>ts.timesheet</code> table reference
      */
     public Timesheet() {
         this(DSL.name("timesheet"), null);
@@ -106,7 +106,7 @@ public class Timesheet extends TableImpl<TimesheetRecord> {
 
     @Override
     public Schema getSchema() {
-        return aliased() ? null : DefaultSchema.DEFAULT_SCHEMA;
+        return aliased() ? null : Ts.TS;
     }
 
     @Override
@@ -116,7 +116,7 @@ public class Timesheet extends TableImpl<TimesheetRecord> {
 
     @Override
     public UniqueKey<TimesheetRecord> getPrimaryKey() {
-        return Keys.TIMESHEET__PK_TIMESHEET;
+        return Keys.TIMESHEET_PKEY;
     }
 
     @Override
