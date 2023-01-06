@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.sql.Date;
-import java.sql.Time;
 import java.util.List;
 
 
@@ -35,6 +33,9 @@ public class TSController {
     private TimeSheetDAO timeSheetDAO;
     @Value("${props.app-name}")
     private String appName;
+
+    @Value("${spring.datasource.url}")
+    private String dataSourceURL;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -61,30 +62,30 @@ public class TSController {
     public int getTotalHours() {
 
         log.info("calling the total hours api");
-
+        log.info("Injected URL="+dataSourceURL);
         return timeSheetDAO.totalHours();
     }
 
     @GetMapping("/ts/missingdays")
-    public List<Date> getMissingHours(@RequestParam int year,@RequestParam int month) {
-        List<Date> allDays = timeSheetDAO.allDays();
+    public List<LocalDate> getMissingHours(@RequestParam int year,@RequestParam int month) {
+        List<LocalDate> allDays = timeSheetDAO.allDays();
         return getMissingDates(allDays,year,month);
 
     }
 
-    private List<Date> getMissingDates(List<Date> dates, int year, int month) {
+    private List<LocalDate> getMissingDates(List<LocalDate> dates, int year, int month) {
         // Get the first and last days of the month
         LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
         LocalDate lastDayOfMonth = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth());
 
         // Create a list to store the missing dates
-        List<Date> missingDates = new ArrayList<>();
+        List<LocalDate> missingDates = new ArrayList<>();
 
         // Iterate over all the days in the month and check for missing dates
         for (LocalDate date = firstDayOfMonth; !date.isAfter(lastDayOfMonth); date = date.plusDays(1)) {
-            Date sqlDate = Date.valueOf(date);
-            if (!dates.contains(sqlDate) && !date.getDayOfWeek().equals(DayOfWeek.SATURDAY) && !date.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-                missingDates.add(sqlDate);
+
+            if (!dates.contains(date) && !date.getDayOfWeek().equals(DayOfWeek.SATURDAY) && !date.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+                missingDates.add(date);
             }
         }
 

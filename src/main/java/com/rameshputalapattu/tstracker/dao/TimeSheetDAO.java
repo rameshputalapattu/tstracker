@@ -1,75 +1,89 @@
 package com.rameshputalapattu.tstracker.dao;
 
+import com.rameshputalapattu.tstracker.jooq.model.Tables;
 import com.rameshputalapattu.tstracker.model.TimeSheet;
-import org.slf4j.Logger;
+
+import lombok.extern.slf4j.Slf4j;
+import org.jooq.*;
+import org.jooq.Record;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.beans.factory.annotation.Value;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-import org.slf4j.LoggerFactory;
 
 
+
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+
+@Slf4j
 public class TimeSheetDAO implements DAO<TimeSheet> {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final String dataSourceURL;
 
-    private static final Logger log = LoggerFactory.getLogger(TimeSheetDAO.class);
+    private final DSLContext dslContext;
 
-    private final RowMapper<TimeSheet> rowMapper = (rs,rowNum) -> {
-        TimeSheet timeSheet = new TimeSheet();
-        timeSheet.setDate(rs.getDate("date"));
-        timeSheet.setTask(rs.getString("task"));
-        timeSheet.setHours(rs.getInt("hours"));
-        return timeSheet;
-    };
-
+    public TimeSheetDAO(String dataSourceURL,String dataSourceUserName,String dataSourcePassword) throws SQLException {
+        this.dataSourceURL = dataSourceURL;
+        String user = dataSourceUserName;
+        String password = dataSourcePassword;
+        Connection conn = DriverManager.getConnection(this.dataSourceURL, user, password);
+        this.dslContext = DSL.using(conn, SQLDialect.SQLITE);
+    }
     @Override
     public List<TimeSheet> list() {
 
-        String sqlQuery = """
-                select date,task,hours 
-                from timesheet
-                order by date
-                """;
+        Result<Record3<LocalDate,String,Integer>> result = this.dslContext.select(Tables.TIMESHEET.DATE,
+                Tables.TIMESHEET.TASK,
+                Tables.TIMESHEET.HOURS
 
-        return jdbcTemplate.query(sqlQuery,rowMapper);
+                ).from(Tables.TIMESHEET).fetch();
 
+
+       return result.stream().map(it -> {
+        return    new TimeSheet(it.getValue(Tables.TIMESHEET.DATE),
+        it.getValue(Tables.TIMESHEET.TASK),
+        it.getValue(Tables.TIMESHEET.HOURS));}).toList();
 
     }
 
     @Override
     public void create(TimeSheet timeSheet) {
 
-        String insertQuery = "insert into timesheet(date,task,hours) values(?,?,?)";
-        jdbcTemplate.update(insertQuery,timeSheet.getDate(),
-                                        timeSheet.getTask(),
-                                        timeSheet.getHours());
+        this.dslContext
+                .insertInto(Tables.TIMESHEET)
+                .columns(Tables.TIMESHEET.DATE,
+                        Tables.TIMESHEET.TASK,
+                        Tables.TIMESHEET.HOURS)
+                .values(timeSheet.getDate(),
+                        timeSheet.getTask(),
+                        timeSheet.getHours())
+                .execute();
 
 
     }
 
     @Override
     public Optional<TimeSheet> get(int id) {
-        String getSQL = """
-                select date,task,hours 
-                from timesheet
-                where id = ?
-                """;
-        TimeSheet timeSheet = null;
-        try {
-            timeSheet = jdbcTemplate.queryForObject(getSQL,rowMapper,id);
-        } catch (DataAccessException dex) {
-           log.info("Error getting the object "+dex);
-        }
 
-        return Optional.ofNullable(timeSheet);
+        return this.dslContext.select()
+                .from(Tables.TIMESHEET)
+                .where(Tables.TIMESHEET.ID.eq(id))
+                 .fetchOptional(it -> new TimeSheet(it.get(Tables.TIMESHEET.DATE),
+                         it.get(Tables.TIMESHEET.TASK),
+                         it.get(Tables.TIMESHEET.HOURS)
+                         ));
+
+
     }
 
     @Override
@@ -88,19 +102,27 @@ public class TimeSheetDAO implements DAO<TimeSheet> {
                 from timesheet
                 
                 """;
+        Record res = this.dslContext
+                .fetchOne(sql);
 
-        return jdbcTemplate.queryForObject(sql,Integer.class);
+        assert res != null;
+        return res.get(0,Integer.class);
+
 
     }
 
-    public List<Date> allDays() {
+    public List<LocalDate> allDays() {
         String sql = """
                 select distinct date 
                 from timesheet
                 """;
 
-        return jdbcTemplate.query(sql,(rs,rowNum) -> {
-             return rs.getDate("date");
-        });
+       return this.dslContext
+                .select(Tables.TIMESHEET.DATE)
+                .distinctOn(Tables.TIMESHEET.DATE)
+                .from(Tables.TIMESHEET)
+                .fetch(it -> it.getValue(Tables.TIMESHEET.DATE) );
+
+
     }
 }

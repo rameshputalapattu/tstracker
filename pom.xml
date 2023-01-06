@@ -23,20 +23,9 @@
 			<version>42.5.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jdbc</artifactId>
-
-		</dependency>
-
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jooq</artifactId>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq</artifactId>
+			<version>3.17.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.xerial</groupId>
@@ -81,6 +70,8 @@
 	</dependencies>
 
 
+
+
 	<build>
 		<plugins>
 			<plugin>
@@ -95,6 +86,72 @@
 					</excludes>
 				</configuration>
 
+			</plugin>
+			<plugin>
+
+				<!-- Specify the maven code generator plugin -->
+				<!-- Use org.jooq                for the Open Source Edition
+                         org.jooq.pro            for commercial editions with Java 17 support,
+                         org.jooq.pro-java-11    for commercial editions with Java 11 support,
+                         org.jooq.pro-java-8     for commercial editions with Java 8 support,
+                         org.jooq.trial          for the free trial edition with Java 17 support,
+                         org.jooq.trial-java-11  for the free trial edition with Java 11 support,
+                         org.jooq.trial-java-8   for the free trial edition with Java 8 support
+
+                     Note: Only the Open Source Edition is hosted on Maven Central.
+                           Import the others manually from your distribution -->
+				<groupId>org.jooq</groupId>
+				<artifactId>jooq-codegen-maven</artifactId>
+				<version>3.17.6</version>
+
+				<!-- The plugin should hook into the generate goal -->
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<!-- Manage the plugin's dependency. In this example, we'll use a PostgreSQL database -->
+				<dependencies>
+					<dependency>
+						<groupId>org.xerial</groupId>
+						<artifactId>sqlite-jdbc</artifactId>
+						<version>3.40.0.0</version>
+					</dependency>
+
+				</dependencies>
+
+				<!-- Specify the plugin configuration.
+                     The configuration format is the same as for the standalone code generator -->
+				<configuration>
+
+					<!-- JDBC connection parameters -->
+					<jdbc>
+						<driver>org.sqlite.JDBC</driver>
+						<url>jdbc:sqlite:/Users/rameshputalapattu/dipdb/timesheet.sqlite</url>
+						<user></user>
+						<password></password>
+					</jdbc>
+
+					<!-- Generator parameters -->
+					<generator>
+						<database>
+							<name>org.jooq.meta.sqlite.SQLiteDatabase</name>
+							<includes>.*</includes>
+							<excludes></excludes>
+							<!-- In case your database supports catalogs, e.g. SQL Server:
+                            <inputCatalog>public</inputCatalog>
+                              -->
+							<inputSchema></inputSchema>
+						</database>
+						<target>
+							<packageName>com.rameshputalapattu.tstracker.jooq.model</packageName>
+							<directory>src/main/java</directory>
+						</target>
+					</generator>
+				</configuration>
 			</plugin>
 
 		</plugins>

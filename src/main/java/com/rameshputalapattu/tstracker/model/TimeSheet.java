@@ -5,16 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-@AllArgsConstructor
 public class TimeSheet {
-
+    private LocalDate date;
     private String task;
-    private Date date;
     private int hours;
-
 }
