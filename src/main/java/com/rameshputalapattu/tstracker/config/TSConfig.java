@@ -28,10 +28,17 @@ public class TSConfig {
     @Value("${spring.datasource.password:}")
     private String dataSourcePassword;
 
+    @Value("${jooq.dialect}")
+    private String jooqDialect;
+
     @Bean
     public TimeSheetDAO getTimeSheetDAO() throws SQLException {
 
-        return new TimeSheetDAO(dataSourceURL,dataSourceUserName,dataSourcePassword);
+        return new TimeSheetDAO(dataSourceURL,
+                dataSourceUserName,
+                dataSourcePassword,
+                jooqDialect
+        );
     }
 
 }

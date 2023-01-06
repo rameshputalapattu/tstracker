@@ -32,12 +32,16 @@ public class TimeSheetDAO implements DAO<TimeSheet> {
 
     private final DSLContext dslContext;
 
-    public TimeSheetDAO(String dataSourceURL,String dataSourceUserName,String dataSourcePassword) throws SQLException {
+    public TimeSheetDAO(String dataSourceURL,
+                        String dataSourceUserName,
+                        String dataSourcePassword,
+                        String jooqDialect) throws SQLException {
         this.dataSourceURL = dataSourceURL;
         String user = dataSourceUserName;
         String password = dataSourcePassword;
         Connection conn = DriverManager.getConnection(this.dataSourceURL, user, password);
-        this.dslContext = DSL.using(conn, SQLDialect.SQLITE);
+
+        this.dslContext = DSL.using(conn, SQLDialect.valueOf(jooqDialect));
     }
     @Override
     public List<TimeSheet> list() {
