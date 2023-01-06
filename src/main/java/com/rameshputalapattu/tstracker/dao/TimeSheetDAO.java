@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.slf4j.LoggerFactory;
 
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +36,7 @@ public class TimeSheetDAO implements DAO<TimeSheet> {
         String sqlQuery = """
                 select date,task,hours 
                 from timesheet
+                order by date
                 """;
 
         return jdbcTemplate.query(sqlQuery,rowMapper);
@@ -78,5 +80,27 @@ public class TimeSheetDAO implements DAO<TimeSheet> {
     @Override
     public void delete(int id) {
 
+    }
+
+    public int totalHours() {
+        String sql = """
+                select sum(hours) as total_hours 
+                from timesheet
+                
+                """;
+
+        return jdbcTemplate.queryForObject(sql,Integer.class);
+
+    }
+
+    public List<Date> allDays() {
+        String sql = """
+                select distinct date 
+                from timesheet
+                """;
+
+        return jdbcTemplate.query(sql,(rs,rowNum) -> {
+             return rs.getDate("date");
+        });
     }
 }
