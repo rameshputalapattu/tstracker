@@ -4,15 +4,10 @@ import com.rameshputalapattu.tstracker.jooq.model.Tables;
 import com.rameshputalapattu.tstracker.model.TimeSheet;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.impl.DSL;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
+import org.jooq.*;
+;
+import org.jooq.impl.DSL;
 
 
 
@@ -23,6 +18,8 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+
 
 
 @Slf4j
@@ -46,17 +43,11 @@ public class TimeSheetDAO implements DAO<TimeSheet> {
     @Override
     public List<TimeSheet> list() {
 
-        Result<Record3<LocalDate,String,Integer>> result = this.dslContext.select(Tables.TIMESHEET.DATE,
+        return this.dslContext.select(Tables.TIMESHEET.DATE,
                 Tables.TIMESHEET.TASK,
                 Tables.TIMESHEET.HOURS
 
-                ).from(Tables.TIMESHEET).fetch();
-
-
-       return result.stream().map(it -> {
-        return    new TimeSheet(it.getValue(Tables.TIMESHEET.DATE),
-        it.getValue(Tables.TIMESHEET.TASK),
-        it.getValue(Tables.TIMESHEET.HOURS));}).toList();
+                ).from(Tables.TIMESHEET).fetchInto(TimeSheet.class);
 
     }
 
@@ -82,16 +73,20 @@ public class TimeSheetDAO implements DAO<TimeSheet> {
         return this.dslContext.select()
                 .from(Tables.TIMESHEET)
                 .where(Tables.TIMESHEET.ID.eq(id))
-                 .fetchOptional(it -> new TimeSheet(it.get(Tables.TIMESHEET.DATE),
-                         it.get(Tables.TIMESHEET.TASK),
-                         it.get(Tables.TIMESHEET.HOURS)
-                         ));
+                .fetchOptionalInto(TimeSheet.class);
+
 
 
     }
 
     @Override
-    public void update(int id) {
+    public void update(int id,TimeSheet timeSheet) {
+
+        this.dslContext.update(Tables.TIMESHEET)
+                .set(Tables.TIMESHEET.DATE,timeSheet.getDate())
+                .set(Tables.TIMESHEET.TASK,timeSheet.getTask())
+                .set(Tables.TIMESHEET.HOURS,timeSheet.getHours())
+                .execute();
 
     }
 
@@ -106,11 +101,8 @@ public class TimeSheetDAO implements DAO<TimeSheet> {
                 from timesheet
                 
                 """;
-        Record res = this.dslContext
-                .fetchOne(sql);
 
-        assert res != null;
-        return res.get(0,Integer.class);
+        return this.dslContext.resultQuery(sql).fetchOneInto(Integer.class);
 
 
     }
