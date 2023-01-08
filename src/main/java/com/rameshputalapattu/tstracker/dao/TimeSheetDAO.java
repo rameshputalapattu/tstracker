@@ -46,17 +46,12 @@ public class TimeSheetDAO implements DAO<TimeSheet> {
     @Override
     public List<TimeSheet> list() {
 
-        Result<Record3<LocalDate,String,Integer>> result = this.dslContext.select(Tables.TIMESHEET.DATE,
+        return  this.dslContext.select(Tables.TIMESHEET.DATE,
                 Tables.TIMESHEET.TASK,
                 Tables.TIMESHEET.HOURS
 
-                ).from(Tables.TIMESHEET).fetch();
+                ).from(Tables.TIMESHEET).fetchInto(TimeSheet.class);
 
-
-       return result.stream().map(it -> {
-        return    new TimeSheet(it.getValue(Tables.TIMESHEET.DATE),
-        it.getValue(Tables.TIMESHEET.TASK),
-        it.getValue(Tables.TIMESHEET.HOURS));}).toList();
 
     }
 
